@@ -53,6 +53,8 @@ class Server {
         this.mainLoopBind = null;
         this.ticks = 0;
         this.disableSpawn = false;
+        this.superFoodAdded = 0;
+        this.superFootPercentage = .01;
 
         // Config
         this.config = require("./config.js");
@@ -680,11 +682,12 @@ class Server {
         this.addNode(cell);
     }
     spawnFood() {
-        const isSuperFood = Math.random() < 0.01;
+        const isSuperFood = this.superFoodAdded <= this.config.foodAmount * this.superFootPercentage;
         let food;
 
         if (isSuperFood) {
           food = new Entity.SuperFood(this, null, this.randomPos(), this.config.foodMaxSize);
+          this.superFoodAdded++;
         } else {
           food = new Entity.Food(
             this,
