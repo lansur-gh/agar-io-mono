@@ -680,13 +680,27 @@ class Server {
         this.addNode(cell);
     }
     spawnFood() {
-        var cell = new Entity.Food(this, null, this.randomPos(), this.config.foodMinSize);
-        if (this.config.foodMassGrow) {
-            var maxGrow = this.config.foodMaxSize - cell.radius;
-            cell.setSize(cell.radius += maxGrow * Math.random());
+        const isSuperFood = Math.random() < 0.01;
+        let food;
+
+        if (isSuperFood) {
+          food = new Entity.SuperFood(this, null, this.randomPos(), this.config.foodMaxSize);
+        } else {
+          food = new Entity.Food(
+            this,
+            null,
+            this.randomPos(),
+            this.config.foodMinSize
+          );
+          food.color = this.getRandomColor();
         }
-        cell.color = this.getRandomColor();
-        this.addNode(cell);
+
+        if (this.config.foodMassGrow) {
+          const maxGrow = this.config.foodMaxSize - food.radius;
+          food.setSize(food.radius + maxGrow * Math.random());
+        }
+        
+        this.addNode(food);
     }
     spawnVirus() {
         var virus = new Entity.Virus(this, null, this.randomPos(), this.config.virusMinSize);
