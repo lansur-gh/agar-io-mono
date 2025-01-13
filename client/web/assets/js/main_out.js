@@ -14,8 +14,8 @@
     function byClass(clss, parent) {
         return (parent || document).getElementsByClassName(clss);
     }
-    */
-
+    */ 
+   
     class Sound {
         constructor(src, volume, maximum) {
             this.src = src;
@@ -1637,6 +1637,7 @@
         chatBox = byId('chat_textbox');
         soundsVolume = byId('soundsVolume');
         mainCanvas.focus();
+        const connectionManager = new window.ConnectionManager(wsCleanup, 10);
 
         loadSettings();
         window.addEventListener('beforeunload', storeSettings);
@@ -1645,6 +1646,7 @@
             const skin = settings.skin;
             sendPlay((skin ? `<${skin}>` : '') + settings.nick);
             hideESCOverlay();
+            connectionManager.showButton();
         });
         window.onkeydown = keydown;
         window.onkeyup = keyup;
@@ -1727,6 +1729,9 @@
         }
         drawGame();
         Logger.info(`Init done in ${Date.now() - LOAD_START}ms`);
+        Logger.info(`Init done in ${Date.now() - LOAD_START}ms`);        
+        Logger.info(`Init done in ${Date.now() - LOAD_START}ms`);       
+        
     }
     window.setserver = (url) => {
         if (url === wsUrl && ws && ws.readyState <= WebSocket.OPEN) return;

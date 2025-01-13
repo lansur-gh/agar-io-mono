@@ -151,3 +151,9 @@ input[type=checkbox] {
     margin-right: 10px;
     user-select: none;
 }
+
+#disconnect-button {
+    position: fixed;
+    top: 120px;
+    left: 5px;
+}
