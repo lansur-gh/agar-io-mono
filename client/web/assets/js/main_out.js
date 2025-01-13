@@ -261,6 +261,12 @@
         KeyP: 'p',
     };
 
+    
+    const directionManager = new window.DirectionManager();
+
+    // let dirMouseX = 0;
+    // let dirMouseY = 0;
+
     function wsCleanup() {
         if (!ws) return;
         Logger.debug('WebSocket cleanup');
@@ -1362,10 +1368,15 @@
             this.sColor = value.darker();
         }
         draw(ctx) {
-            ctx.save();
-            this.drawShape(ctx);
-            this.drawText(ctx);
-            ctx.restore();
+          ctx.save();
+          this.drawShape(ctx);
+          this.drawText(ctx);
+
+          if(this.name) {
+            this.drawEyes(ctx);
+          }
+
+          ctx.restore();
         }
         drawShape(ctx) {
             ctx.fillStyle = settings.showColor ? this.color.toHex() : '#FFFFFF';
@@ -1424,8 +1435,9 @@
         }
         drawText(ctx) {
             if (this.s < 20 || this.jagged) return;
+            
             if (this.name && settings.showNames) {
-                drawText(ctx, false, this.x, this.y, this.nameSize, this.drawNameSize, this.name);
+                drawText(ctx, false, this.x, this.y, this.nameSize / 1.5, this.drawNameSize, this.name);
             }
             if (settings.showMass && (cells.mine.indexOf(this.id) !== -1 || cells.mine.length === 0)) {
                 const mass = (~~(this.s * this.s / 100)).toString();
@@ -1434,6 +1446,53 @@
                     y += Math.max(this.s / 4.5, this.nameSize / 1.5);
                 drawText(ctx, true, this.x, y, this.nameSize / 2, this.drawNameSize / 2, mass);
             }
+        }
+
+        drawEyes(ctx) {
+            const eyeOffsetX = this.s / 2.5;
+            const eyeOffsetY = this.s / 2;
+            const eyeRadius = this.s / 5;
+            const pupilRadius = this.s / 10;
+
+            const leftEyeX = this.x - eyeOffsetX;
+            const leftEyeY = this.y - eyeOffsetY;
+            ctx.beginPath();
+            ctx.arc(leftEyeX, leftEyeY, eyeRadius, 0, PI_2, false);
+            ctx.fillStyle = "white";
+            ctx.fill();
+            ctx.closePath();
+
+            const rightEyeX = this.x + eyeOffsetX;
+            const rightEyeY = this.y - eyeOffsetY;
+            ctx.beginPath();
+            ctx.arc(rightEyeX, rightEyeY, eyeRadius, 0, PI_2, false);
+            ctx.fillStyle = "white";
+            ctx.fill();
+            ctx.closePath();
+
+            const {x, y} = directionManager.getDirection();
+
+            const dirX = x - this.x;
+            const dirY = y - this.y;
+            const dirLength = Math.sqrt(dirX ** 2 + dirY ** 2);
+            const normalizedX = dirX / dirLength;
+            const normalizedY = dirY / dirLength;
+
+            const leftPupilX = leftEyeX + normalizedX * pupilRadius;
+            const leftPupilY = leftEyeY + normalizedY * pupilRadius;
+            ctx.beginPath();
+            ctx.arc(leftPupilX, leftPupilY, pupilRadius, 0, PI_2, false);
+            ctx.fillStyle = "black";
+            ctx.fill();
+            ctx.closePath();
+
+            const rightPupilX = rightEyeX + normalizedX * pupilRadius;
+            const rightPupilY = rightEyeY + normalizedY * pupilRadius;
+            ctx.beginPath();
+            ctx.arc(rightPupilX, rightPupilY, pupilRadius, 0, PI_2, false);
+            ctx.fillStyle = "black";
+            ctx.fill();
+            ctx.closePath();
         }
     }
 
@@ -1637,7 +1696,7 @@
         chatBox = byId('chat_textbox');
         soundsVolume = byId('soundsVolume');
         mainCanvas.focus();
-        const connectionManager = new window.ConnectionManager(wsCleanup, 10);
+        const connectionManager = new window.ConnectionManager(wsCleanup, 10);        
 
         loadSettings();
         window.addEventListener('beforeunload', storeSettings);
@@ -1661,12 +1720,18 @@
         mainCanvas.onmousemove = (event) => {
             mouseX = event.clientX;
             mouseY = event.clientY;
+
+            const dirMouseX =
+              (mouseX - mainCanvas.width / 2) / camera.scale + camera.x;
+            const dirMouseY =
+              (mouseY - mainCanvas.height / 2) / camera.scale + camera.y;
+
+            directionManager.setDirectionX(dirMouseX);
+            directionManager.setDirectionY(dirMouseY);
         };
         setInterval(() => {
-            sendMouseMove(
-                (mouseX - mainCanvas.width / 2) / camera.scale + camera.x,
-                (mouseY - mainCanvas.height / 2) / camera.scale + camera.y
-            );
+            const { x, y } = directionManager.getDirection();
+            sendMouseMove(x, y);
         }, 40);
         window.onresize = () => {
             const width = mainCanvas.width = window.innerWidth;
