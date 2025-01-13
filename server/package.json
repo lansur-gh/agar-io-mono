@@ -1,0 +1,11 @@
+{
+  "name": "ln-ogar-mono-server",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "dependencies": {
+    "ws": "^7.4.0"
+  },
+  "scripts": {
+    "start": "cd src && node index"
+  }
+}

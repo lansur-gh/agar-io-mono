@@ -1,0 +1,21 @@
+{
+  "name": "ln-ogar-mono",
+  "version": "1.0.0",
+  "description": "Ogar.io mono repository for testing",
+  "author": "Ruslan (https://github.com/lansur-gh)",
+  "homepage": "https://github.com/lansur-gh/agar-io-mono",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "install:client": "cd client && npm install",
+    "start:client": "cd client && npm start",
+    "install:server": "cd server && npm install",
+    "start:server": "cd server && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lansur-gh/agar-io-mono"
+  }
+}
