@@ -2,7 +2,7 @@
 
 class ConnectionManager {
   constructor(stopGame, disconnectTimeout = 10) {
-    this.stopGame = stopGame;
+    this.stopHandler = stopGame;
     this.disconnectTimeout = disconnectTimeout;
     this.initButton();
     this.initModal();
@@ -15,7 +15,10 @@ class ConnectionManager {
     button.classList.add("btn");
     button.classList.add("btn-danger");
     button.textContent = "Disconnect";
-    button.onclick = () => this.showModal();
+    button.onclick = () => {
+      this.showModal();
+      this.stopGame();
+    };
     document.body.appendChild(button);
 
     this.disconnectButton = button;
@@ -47,13 +50,17 @@ class ConnectionManager {
     if (this.modal) {
       this.modal.classList.add("show");
       this.modal.style.opacity = 1;
-
-      setTimeout(() => {
-        this.modal.style.opacity = 0;
-        this.modal.classList.remove("show");
-        this.stopGame();
-      }, this.disconnectTimeout * 1000);
     }
+  }
+
+  stopGame() {
+    setTimeout(() => {
+      this.modal.style.opacity = 0;
+      this.modal.classList.remove("show");
+      this.stopHandler();
+      console.log("Game stopped");
+      
+    }, this.disconnectTimeout * 1000);
   }
 }
 

@@ -54,7 +54,6 @@ class Server {
         this.ticks = 0;
         this.disableSpawn = false;
         this.superFoodAdded = 0;
-        this.superFootPercentage = .01;
 
         // Config
         this.config = require("./config.js");
@@ -682,7 +681,9 @@ class Server {
         this.addNode(cell);
     }
     spawnFood() {
-        const isSuperFood = this.superFoodAdded <= this.config.foodAmount * this.superFootPercentage;
+        const isSuperFood =
+          this.superFoodAdded <=
+          this.config.foodAmount * (this.config.superfoodPercentage || .01);
         let food;
 
         if (isSuperFood) {

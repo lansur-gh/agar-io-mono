@@ -1717,7 +1717,7 @@
             isTyping = true;
             drawChat();
         };
-        mainCanvas.onmousemove = (event) => {
+        document.body.onmousemove = (event) => {
             mouseX = event.clientX;
             mouseY = event.clientY;
 

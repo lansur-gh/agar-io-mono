@@ -30,4 +30,5 @@ $ npm run start:server
 
 1. Create modal for disconnect the game
 2. Add new spawn food for increasing player cell x2
+    (see config["superfoodPercentage"] to regulate superfood amount)
 3. Add eyes to a player cell
